@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import userModel from "../models/user.model";
 import { User } from "../types/user";
 import { comparHash, hashed } from "../utils/hash.util";
+import { generateToken } from "../middleware/auth";
 
 const getUsers = (req: Request, res: Response) => {
     const users = userModel.findAll()
@@ -74,8 +75,10 @@ const checkAuth = (req: Request, res: Response) => {
     },)
 }
 
+
+
 const loginUser = async (req: Request<{}, {}, User>, res: Response) => {
-    const { username, password } = req.body
+    const { id, username, password, firstname, lastname } = req.body
     const user = userModel.findByUsername(username)
     if (!user) {
         res.status(404).json({ message: 'User not found!' })
@@ -86,18 +89,26 @@ const loginUser = async (req: Request<{}, {}, User>, res: Response) => {
         res.status(404).json({ message: 'Password Invalid' })
         return
     }
-    res.cookie('isAuthenticated', true, {
+    // res.cookie('isAuthenticated', true, {
+    //     httpOnly: true,
+    //     maxAge: 3 * 60 * 1000,
+    //     signed: true
+    // })
+    // res.cookie('userId', user.id, {
+    //     httpOnly: true,
+    //     maxAge: 3 * 60 * 1000,
+    //     signed: true
+    // })
+
+    ///////////////////////
+    const token = generateToken({ id: user.id, username: user.username, password: user.password, firstname: user.firstname, lastname: user.lastname })
+    res.cookie("token", token, {
         httpOnly: true,
         maxAge: 3 * 60 * 1000,
-        signed: true
-    })
-    res.cookie('userId', user.id, {
-        httpOnly: true,
-        maxAge: 3 * 60 * 1000,
-        signed: true
     })
     res.status(200).json({ message: 'Login authenticated' })
 }
+
 const logoutUser = (req: Request, res: Response) => {
     res.clearCookie('token');
     res.json({ message: 'Logout successful' });

@@ -3,15 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("uuid");
 class UserModel {
     constructor() {
-        this.users = [
-            {
-                id: "testID",
-                username: "testUsername",
-                password: "testPassword",
-                firstname: "testFirstname",
-                lastname: "testLastname"
-            }
-        ];
+        this.users = [];
     }
     findAll() {
         return this.users;

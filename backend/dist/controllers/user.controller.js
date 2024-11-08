@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_model_1 = __importDefault(require("../models/user.model"));
 const hash_util_1 = require("../utils/hash.util");
+const auth_1 = require("../middleware/auth");
 const getUsers = (req, res) => {
     const users = user_model_1.default.findAll();
     res.json(users);
@@ -78,7 +79,7 @@ const checkAuth = (req, res) => {
     });
 };
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = req.body;
+    const { id, username, password, firstname, lastname } = req.body;
     const user = user_model_1.default.findByUsername(username);
     if (!user) {
         res.status(404).json({ message: 'User not found!' });
@@ -89,15 +90,21 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(404).json({ message: 'Password Invalid' });
         return;
     }
-    res.cookie('isAuthenticated', true, {
+    // res.cookie('isAuthenticated', true, {
+    //     httpOnly: true,
+    //     maxAge: 3 * 60 * 1000,
+    //     signed: true
+    // })
+    // res.cookie('userId', user.id, {
+    //     httpOnly: true,
+    //     maxAge: 3 * 60 * 1000,
+    //     signed: true
+    // })
+    ///////////////////////
+    const token = (0, auth_1.generateToken)({ id: user.id, username: user.username, password: user.password, firstname: user.firstname, lastname: user.lastname });
+    res.cookie("token", token, {
         httpOnly: true,
         maxAge: 3 * 60 * 1000,
-        signed: true
-    });
-    res.cookie('userId', user.id, {
-        httpOnly: true,
-        maxAge: 3 * 60 * 1000,
-        signed: true
     });
     res.status(200).json({ message: 'Login authenticated' });
 });
