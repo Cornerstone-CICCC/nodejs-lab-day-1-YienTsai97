@@ -3,15 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 
 class UserModel {
-    private users: User[] = [
-        {
-            id: "testID",
-            username: "testUsername",
-            password: "testPassword",
-            firstname: "testFirstname",
-            lastname: "testLastname"
-        }
-    ]
+    private users: User[] = []
 
     findAll(): User[] {
         return this.users
