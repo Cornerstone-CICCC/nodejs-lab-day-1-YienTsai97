@@ -1,0 +1,96 @@
+---
+
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Astro</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Register</h1>
+            <form class="register-form">
+                <label>
+                    <span>Username:</span>
+                    <input
+                        type="text"
+                        name="username"
+                        autocomplete="off"
+                        id="username"
+                        required
+                    />
+                </label>
+                <label>
+                    <span>Password:</span>
+                    <input type="password" name="password" required />
+                </label>
+                <label>
+                    <span>Firstname:</span>
+                    <input
+                        type="text"
+                        name="firstname"
+                        autocomplete="off"
+                        id="firstname"
+                        required
+                    />
+                </label>
+                <label>
+                    <span>Lastname:</span>
+                    <input
+                        type="text"
+                        name="lastname"
+                        autocomplete="off"
+                        id="lastname"
+                        required
+                    />
+                </label>
+                <button type="submit">Register User</button>
+            </form>
+            <button class="login-btn">Login</button>
+        </div>
+
+        <script>
+            const form = document.querySelector(
+                ".register-form",
+            ) as HTMLFormElement;
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const username = formData.get("username");
+                const password = formData.get("password");
+                const firstname = formData.get("firstname");
+                const lastname = formData.get("lastname");
+
+                const response = await fetch("http://localhost:3000/signup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        firstname: firstname,
+                        lastname: lastname,
+                    }),
+                    credentials: "include",
+                });
+                const data = response.json();
+                console.log(data);
+                window.location.href = "/login";
+            });
+
+            const loginBtn = document.querySelector(
+                ".login-btn",
+            ) as HTMLButtonElement;
+            loginBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                window.location.href = "/login";
+            });
+        </script>
+    </body>
+</html>
